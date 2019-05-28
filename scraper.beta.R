@@ -92,36 +92,3 @@ write.table(wordcount,"wordfile.txt")    #text file saving
 pal <- brewer.pal(9,"Set1")
 wordcloud(names(wordcount),freq=wordcount,scale=c(5,1),rot.per=0,min.freq=12,
           random.order=F,random.color=T,colors=pal)
-
-z <- c(1:3,NA)
-is.na(z)
-z==NA
-c(1,1,1,2)==2
-c(2,4,6,8)+c(1,3,5,7,9)
-length(pi)
-"+"(2,3)
-x<- 1:100
-sum(x>50)
-sum(x>=50)
-x>50
-f <- function(x,a)return((x-a)^2)
-f(1:2,3)
-x <- c(1,2,3,NA)
-mean(x)
-subset()
-k <- factor(c("A","B","C"))
-class(k)
-mode(k)
-subset()
-
-library(reshape)
-md <- data.frame(id=(c(1,1,2,2)),time=c(1,2,1,2),x1=c(5,3,6,2),x2=c(6,5,1,4))
-melt <- melt(md,id=c("id","time"))
-cast(melt,id+time~variable)
-cast(melt,id+variable~time)
-
-head(airquality,5)
-md <- melt(airquality,id="Day")
-head(md)
-cast(md,Day~variable,mean,na.rm=T)
-cast()
