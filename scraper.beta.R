@@ -1,5 +1,5 @@
 getwd()
-setwd("C:/Users/limwk/Desktop/R/file/")
+setwd("D:/limworkspace/R_selfstudy")
 getwd()
 install.packages("stringr")
 library(stringr)
@@ -21,41 +21,37 @@ library(data.table)
 
 #---------------------------------chapter1 url parsing
 
-hk_url <- "http://search.hankyung.com/apps.frm/search.news?query=%EC%A0%84%EA%B8%B0%EC%9E%90%EB%8F%99%EC%B0%A8&page="
+hk_url <- "http://search.hankyung.com/apps.frm/search.news?query=%EC%A0%84%EA%B8%B0%EC%9E%90%EB%8F%99%EC%B0%A8&page=" # 쿼리지정 가능 
 
 hk_urls <- NULL
 for (x in 1:5){
-  hk_urls[x+1] <- paste(hk_url, as.character(x),sep = "",encoding="utf-8")
+  hk_urls[x] <- paste(hk_url, as.character(x),sep = "",encoding="utf-8")
 }
 
 urls <- NULL
 for(url in hk_urls){
   html <- read_html(url)
-  urls <- c(urls, html %>% html_nodes(".txt_wrap") %>% html_nodes("a") %>% html_attr("href")%>% unique())
+  urls <- c(urls, html %>% html_nodes(".article") %>% html_nodes(".txt_wrap") %>% html_nodes("a") %>% html_attr("href")%>% unique())
 }
-urls <- urls[-grep("tag",urls)]
-urls <- urls[-grep("magazine",urls)]
-urls <- urls[-grep("autotimes",urls)]
-urls <- urls[-grep("marketinsight",urls)]
-urls <- urls[-grep("snacker",urls)]
-urls <- repair_encoding(urls,from="utf-8")
+
+urls <- urls[str_detect(urls, "article")] # 특정문자가 들어있는 행 찾기
+# urls <- urls[-grep("tag",urls)] # 특정문자가 들어있는 행 지우기 
+
 html2 <- NULL
 links <- NULL
-
 txts <- NULL
+
 for(links in urls){
-  html2 <- read_html(links,encoding = 'euc-kr')
-  txts <-  c(txts,html2 %>% html_nodes(".news_view") %>% html_text())
+  html2 <- read_html(links, encoding = 'utf-8')
+  txts <-  c(txts, html2 %>% html_nodes(".wrap_article") %>% html_text())
 }
 
-text <- c(text, html2 %>% html_nodes("#newsView") %>% html_text())
-
-news <- cbind("검색어"="전기자동차",url=news_url,content=unlist(news_text))
+news <- cbind("검색어"="전기자동차",url=urls,content=unlist(txts))
 news <- as.data.frame(news)
-
+View(news)
 write.csv(news,"news.csv")
 
-#----------------------------------chapter2 text mining 
+#----------------------------------chapter2 data cleaning
 
 text <- gsub("\\n","",text)
 text <- gsub("\\d+","",text)
